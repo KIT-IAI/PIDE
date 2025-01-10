@@ -1,0 +1,152 @@
+# 01 GeneralConfig
+deltaTime : 15 # Simulation sample time in minutes
+maxTime : 180  # Total duration of the simulation
+mpv_settings:  # Set the Mini Photovoltaic (MPV) Settings for Grid Analysis
+  mpv_flag: True # Optional flag parameter to enable/disable MPV analysis.
+  mpv_benchmark: "simbench" # MPV benchmarking source: (1) "simbench" profiles customized to MPV settings, (2) "mpvbench" based on real measurements, or (3) "customised" for user-defined data.
+  mpv_scaling: 0.60 # Scaling MPV (0.-10.0).
+  mpv_concentration_rate_percent: 100 # MPV Concentration rate as a percentage, ranging from 0.00 to 100.00.
+  mpv_inverter_apparent_power: 600 # (gamma1) Configurable apparent power maximum value of the MPV microinverter
+  mpv_solar_cell_capacity: 800 # (gamma2) Configurable maximum power value of the MPV solar cells
+mcs_settings: # Set the Monte Carlo Simulaton Settings
+  flag_monte_carlo: True # Flag to enable Monte Carlo simulation mode.
+  num_monte_carlo_runs: 2 # Number of Monte Carlo simulation runs (default: 2).
+  loc: 0.00 # The location parameter for the normal distribution (default: 0.00).
+  error_std_dev: 0.001 # Standard deviation for the error in simulations.
+  seed_value: 42 # Initial Seed Value for Monte Carlo Simulations (default: 42, range 0-100).
+    # Reproducibility (with fixed seed_value=42, i.e., always the same random number generator sequence)
+    # Stochasticity (with "flag_monte_carlo: True" the "seed_value" starts with the initial value and 
+    # increases incrementally +1 with each new Monte Carlo simulation (given via "num_monte_carlo_runs"). 
+    # This generates different random number sequences with each call)
+  add_noise: True # Flag to indicate whether noise should be added to the simulation.
+# 01 cfg:
+cfg:
+  cfg_current_filename: ""
+  cfg_default: "default_config_grid_manage_der.yaml"
+  cfg_user: "user_config_grid_manage_der.yaml"
+# 02 cfg_settings:
+cfg_settings:
+  cfg_default_plot_path: default_plot_config.yaml
+  cfg_user_plot_path: user_plot_config_grid.yaml
+  helper_path: /hkfs/home/haicore/iai/ii6824/PIDE/helper
+  input_data_path: /hkfs/home/haicore/iai/ii6824/PIDE/input_data
+  input_data_type: .pickle
+  output_data_path: /hkfs/home/haicore/iai/ii6824/PIDE/output/local
+  output_data_type: ''
+  output_file_type: .json
+  output_test_path: /hkfs/home/haicore/iai/ii6824/PIDE/test
+  run_main_base_path: ''
+  yaml_path: /hkfs/home/haicore/iai/ii6824/PIDE/input_yaml_haicore # input_local_haicore
+  sequence_id_path: ''
+  write_to_rawdata: false
+# 02 DataConfig
+rawdata:
+  benchmark: "simbench" # (1): simbench, (2): customised
+  net_name: rural_grid_15
+  sb_code: 1-LV-rural1--0-sw
+  scenario: "2-future" # (1):"0-today", (2):"1-near future", (3):"2-future", or (4):"customised"
+  valid_sb_code: ["1-LV-rural1--0-sw", "1-LV-rural2--0-sw", "1-LV-rural3--0-sw", "1-LV-semiurb4--0-sw", "1-LV-semiurb5--0-sw", "1-LV-urban6--0-sw", "Customised"]
+  valid_sb_base_codes: ["1-LV-rural1--{}-sw", "1-LV-rural2--{}-sw", "1-LV-rural3--{}-sw","1-LV-semiurb4--{}-sw", "1-LV-semiurb5--{}-sw", "1-LV-urban6--{}-sw"]
+  valid_sb_scenario: ["0-today", "1-near future", "2-future"] # (1): today, (2): near future, (3): future
+  valid_sb_scenario_storage: ["1-near future", "2-future"] # (1): "1-near future", (2): "2-future"
+  scaling:
+    pv: 1.0
+    load: 1.0
+    wind: 1.0
+    storage: 1.0
+  soc_initial: 0.0 # Initial values for the state of charge of the storage (0.00-100.00).
+# 03 RegulationStandardConfig (VDE/IEEE):
+regulation_standard_modes: ["vde", "ieee"] #,"datasource"
+standard_modes: ["deadband", "base", "customised"]
+# 03 ControlModesConfig
+control_modes:
+  pv_ctrl: "constant_power_factor_active_power_ctrl" 
+  # *(1): 'datasource' RawData
+  # *(2): `voltage_reactive_power_ctrl` Reactive Power-Voltage (Q(U)) 
+  # *(3): `power_factor_active_power_ctrl` Reactive Power-Active Power (Q(P))  
+  # *(4): `constant_power_factor_active_power_ctrl` Constant Power Factor (cos phi_target,const)  (constant_power_factor_active_power_ctrl name anpassen)
+  storage_p_ctrl: "datasource"
+  # (1): 'datasource' 
+  # (2): 'rbc_pvbes_decentralized_sc_ctrl'
+  # (3): 'rbc_pvbes_distributed_sc_ctrl'
+  # (4): 'rbc_pvbes_distributed_sc_dnc_ctrl'
+  # (5): 'rbc_bes_dnc_ctrl'
+  storage_q_ctrl: "datasource"
+  # *(1): 'datasource' RawData -> Q -> zero
+  # *(1): `voltage_reactive_power_ctrl` Reactive Power-Voltage (Q(U)) 
+  # *(2): `constant_power_factor_active_power_ctrl` Constant Power Factor (cos phi_target,const)  (constant_power_factor_active_power_ctrl name anpassen)
+  timeseries_ctrl: "manual"
+  # (1): 'control_module' (PandaPower Time Series Simulation)
+  # (2): 'test_mode' (Test Control Rules)
+  # (3): 'manual' (Manual Time Series Simulation)
+# 04 SimulationConfig
+sim:
+  time_mode: "manual"
+  # (1): "manual"
+  # (2): "random" (testen)
+  resolution: 15 
+  # Simulation resolution, e.g., 15min -> 96 steps_per_day
+  episode_start_hour: 0 
+  # Start hour of the episode (0-24).
+  episode_start_day: 0 
+  # Start day of the episode (0-354).
+  episode_start_min_interval: 0
+  # Starting interval (0-3).
+  episode_limit: 96*3 
+  # Maximum number of time steps in an episode.
+  max_iterations: 180 
+  # Maximum number of iterations. for example: 480 =96*5= 5 days max_iterations
+# 05 GridCriticalityConfig
+criticality:
+  lines_max: 65.00 # Maximum tolerance limit for line congestion
+  v_crit_lower: 0.920 # Lower critical voltage limit
+  v_crit_upper: 1.085 # Upper critical voltage limit
+  v_delta_threshold : 0.01 # Voltage difference threshold
+  v_max: 1.100 # Upper voltage failure limit
+  v_max_threshold : 1.035 # Critical limit for voltage jumps for the current time interval
+  v_min: 0.900 # Lower voltage failure limit
+  v_min_max_delta: 0.100 # Deviation from current voltage
+  transformer_max: 100.00 # Maximum tolerance limit for transformer overheating
+vde:  
+  standard_mode: "deadband"
+  deadband:
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 0.97 # "Medium_low"
+    v_3: 1.00 # "Medium"
+    v_4: 1.03 # "Medium_high"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_deadband_gain: 0.06 # 0.00
+    v_low_gain: 0.03 # 0.03
+    v_high_gain: 0.03 # 0.03
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+  base:
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 1.00 # "Medium"
+    v_3: 1.00 # "Medium"
+    v_4: 1.00 # "Medium"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_deadband_gain: 0.00 # 0.00
+    v_low_gain: 0.00 # 0.00
+    v_high_gain: 0.00 # 0.00
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+  customised: #  Config_ieee (IEEE Std 1547-2018) Status: Active Standard
+    v_1: 0.93
+    v_2: 1.0
+    v_3: 1.0
+    v_4: 1.0
+    v_5: 1.07
+    v_deadband_gain: 0.0
+    v_high_gain: 0.0
+    v_low_gain: 0.0
+    v_nom: 1.0
+    v_nom_net: 1.0
+# 08.1 RBCConfig
+rbc:
+  rendering_initialized: True
+  alpha: 0.5
+rlc:
+  history: 1

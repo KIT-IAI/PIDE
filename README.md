@@ -112,33 +112,33 @@ Arguments:
 | Argument                | Type    | Default Value                       | Choices                         | Help        |
 |-------------------------|---------|-------------------------------------|---------------------------------|-------------|
 | `--benchmark`           | str     | `simbench`                          | `simbench`, `customised`                    | Benchmark dataset: 'simbench', 'customised'.|
-| `--sb_code`             | str     | `1-LV-rural1--0-sw`                 |                                             | Valid code (simbench code) for the benchmark dataset.|
-| `--scenario`            | str     | `2-future`                          | `0-today`, `1-near future`, `2-future`      | Choose from: '0-today', '1-near future', '2-future'.|
-| `--standard`            | str     | `vde`                               | `vde`, `customised`                         | Choose from 'vde'(VDE-AR-N 4105) or 'customised'(IEEE Std 1547-2018).|
-| `--standard_mode`       | str     | `base`                              | `base`, `deadband`, `customised`            | Choose from 'base', 'deadband' or 'customised'.|
+| `--sb_code`             | str     | `1-LV-rural1--0-sw`                 |                                             | Simbench code for the benchmark dataset.|
+| `--scenario`            | str     | `2-future`                          | `0-today`, `1-near future`, `2-future`      | Scenario options: '0-today', '1-near future', '2-future'.|
+| `--standard`            | str     | `vde`                               | `vde`, `customised`                         | Standards: 'vde' (VDE-AR-N 4105) or 'customised' (e.g., IEEE Std 1547-2018).|
+| `--standard_mode`       | str     | `base`                              | `base`, `deadband`, `customised`            | Mode options: 'base', 'deadband', or 'customised'.|
 | `--timeseries_ctrl`     | str     | `control_module`                    | `control_module`, `test_mode`, `manual`     | Timeseries control mode.|
-| `--pv_ctrl`             | str     | `voltage_reactive_power_ctrl`       |`datasource`,`voltage_reactive_power_ctrl`,`power_factor_active_power_ctrl`,`constant_power_factor_active_power_ctrl` | PV control mode.|
-| `--storage_p_ctrl`      | str     | `rbc_pvbes_distributed_sc_ctrl`     |`datasource`,`rbc_pvbes_decentralized_sc_ctrl`,`rbc_pvbes_distributed_sc_ctrl`,`rbc_pvbes_distributed_sc_dnc_ctrl`,`rbc_bes_dnc_ctrl` | Storage P-Control mode.|
-| `--storage_q_ctrl`      | str     | `"voltage_reactive_power_ctrl"`     |`datasource`,`voltage_reactive_power_ctrl`,`constant_power_factor_active_power_ctrl`| Storage Q-Control Mode.|
-| `--soc_initial`         | float   | `5.0`                               | `0.00-100.00`                               | Initial values for the state of charge (SoC) of the storage.|
-| `--scaling_pv`          | float   | `1.0`                               | `0.-10.0`                                   | Scaling PV.|
-| `--scaling_load`        | float   | `1.0`                               | `0.-10.0`                                   | Scaling Load.|
-| `--scaling_storage`     | float   | `1.0`                               | `0.-10.0`                                   | Scaling Storage Sizing.|
-| `--time_mode`           | str     | `"selected"`                        | `selected`, `random`, `default`             | Time mode.|
-| `--episode_start_hour`  | int     | `0`                                 | `0-24`                                      | Start hour.|
-| `--episode_start_day`   | int     | `179`                               | `0-354`                                     | Start day.|
-| `--episode_start_min_interval`| int | `0`                               | `0-3`                                       | Starting interval.|
+| `--pv_ctrl`             | str     | `voltage_reactive_power_ctrl`       |`datasource`,`voltage_reactive_power_ctrl`,`power_factor_active_power_ctrl`,`constant_power_factor_active_power_ctrl` | Control mode for PV systems.|
+| `--storage_p_ctrl`      | str     | `rbc_pvbes_distributed_sc_ctrl`     |`datasource`,`rbc_pvbes_decentralized_sc_ctrl`,`rbc_pvbes_distributed_sc_ctrl`,`rbc_pvbes_distributed_sc_dnc_ctrl`,`rbc_bes_dnc_ctrl` | P-Control mode for storage systems.|
+| `--storage_q_ctrl`      | str     | `"voltage_reactive_power_ctrl"`     |`datasource`,`voltage_reactive_power_ctrl`,`constant_power_factor_active_power_ctrl`| Q-Control mode for storage systems.|
+| `--soc_initial`         | float   | `5.0`                               | `0.00-100.00`                               | Initial state of charge (SoC) for storage systems.|
+| `--scaling_pv`          | float   | `1.0`                               | `0.-10.0`                                   | Scaling factor for PV capacity (0.0-10.0).|
+| `--scaling_load`        | float   | `1.0`                               | `0.-10.0`                                   | Scaling factor for load capacity (0.0-10.0).|
+| `--scaling_storage`     | float   | `1.0`                               | `0.-10.0`                                   | caling factor for storage capacity (0.0-10.0).|
+| `--time_mode`           | str     | `"selected"`                        | `selected`, `random`, `default`             | Time mode: 'selected', 'random', or 'default'.|
+| `--episode_start_hour`  | int     | `0`                                 | `0-24`                                      | Start hour (0-24).|
+| `--episode_start_day`   | int     | `179`                               | `0-354`                                     | Start day (0-354).|
+| `--episode_start_min_interval`| int | `0`                               | `0-3`                                       | Starting interval (0-3).|
 | `--episode_limit`       | int     | `96`                                | `0-35136`                                   | Maximum number of time steps in an episode.|
-| `--max_iterations`      | int     | `35135`                             | `0-35136`                                   | Maximum number of iterations.|
-| `--flag_monte_carlo`    | lambda  | `"false"`                           | `bool`                                      | Flag to enable Monte Carlo simulation mode.|
-| `--num_monte_carlo_runs`| int     | `100`                               |                                             | Number of Monte Carlo simulation runs (default: 2).|
-| `--seed_value`          | int     | `42`                                | `0-100`                                     | Initial Seed Value for Monte Carlo Simulations (default: 42, range 0-100).|
-| `--mpv_flag`            | lambda  | `"true"`                            | `bool`                                      | Optional flag parameter to enable/disable MPV analysis. `false` or `true`|
-| `--mpv_benchmark`       | str     | `"mpvbench"`                        | `simbench`, `mpvbench`, `customised`        | MPV Benchmark dataset: 'simbench' adapted MPV settings, 'mpvbench' for real measurements, or 'customised'.|
-| `--mpv_scaling`                     | float            | `0.60`         | `0.-10.0`              | Scaling MPV (0.-10.0).|
-| `--mpv_concentration_rate_percent`  | float            | `100.00`       | `0.00-100.00`          | MPV Concentration rate as a percentage.|
-| `--mpv_inverter_apparent_power_watt`| int              | `800`          | `600-1000`             | MPV Microinverter Apparent Power Maximum Value|
-| `--mpv_solar_cell_capacity_watt`    | int              | `2000`         | `800-2000`             | MPV Maximum Solar Cell Capacity.|
+| `--max_iterations`      | int     | `35135`                             | `0-35136`                                   | Maximum number of iterations for the simulation.|
+| `--flag_monte_carlo`    | lambda  | `"false"`                           | `bool`                                      | Enable or disable Monte Carlo simulation mode.|
+| `--num_monte_carlo_runs`| int     | `100`                               |                                             | Number of Monte Carlo simulation runs.|
+| `--seed_value`          | int     | `42`                                | `0-100`                                     | Initial seed value for Monte Carlo simulations (range 0-100)..|
+| `--mpv_flag`            | lambda  | `"true"`                            | `bool`                                      | Enable or disable MPV analysis. `false` or `true`|
+| `--mpv_benchmark`       | str     | `"mpvbench"`                        | `simbench`, `mpvbench`, `customised`        | MPV benchmarking source: 'simbench', 'mpvbench', or 'customised'..|
+| `--mpv_scaling`                     | float            | `0.60`         | `0.-10.0`              | Scaling factor for MPV capacity (0.0-10.0).|
+| `--mpv_concentration_rate_percent`  | float            | `100.00`       | `0.00-100.00`          | MPV concentration rate as a percentage (0.0-100.0).|
+| `--mpv_inverter_apparent_power_watt`| int              | `800`          | `600-1000`             | Maximum apparent power for MPV inverters (600-1000 W).|
+| `--mpv_solar_cell_capacity_watt`    | int              | `2000`         | `800-2000`             | Maximum power for MPV solar cells (800-2000 W).|
 
 2. Alternatively, you can modify the arguments in the **[__main__.py](__main__.py)** file to change the default value parameters.
 ---
@@ -205,7 +205,7 @@ To replicate the results from the paper, follow these steps:
     - **For *Case Study 2***: 
         ```bash
         chmod +x ./exe_server_master_cs2_job.sh 
-        ./exe_server_helper_cs1_job.sh
+        ./exe_server_master_cs2_job.sh
         ```
       - Open and execute the notebook `monte_carlo_cs2.ipynb`.
     - **For *Case Study 3***: 

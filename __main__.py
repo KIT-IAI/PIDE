@@ -164,7 +164,7 @@ def main_sim(args):
                 continue
             # Save simulation data
             raw_log_mcs_data.append({"simulation": pg_rbc_pp.output, "arguments": arguments})
-            file_path = os.path.join(folder_name, f"monte_carlo_sim_{i+1}.pkl")
+            file_path = os.path.join(folder_name, f"{pg_rbc_pp.extended_path}_monte_carlo_sim_{i+1}.pkl")
             with open(file_path, "wb") as f:
                 pickle.dump(raw_log_mcs_data[-1], f)
             print(f"Saved Monte Carlo run {i+1} to: {file_path}")

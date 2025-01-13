@@ -195,8 +195,8 @@ To replicate the results from the paper, follow these steps:
 4. Run the provided bash scripts for each case study:
     - **For *Case Study 1***: 
         ```bash
-        chmod +x ./exe_server_master_sa_job.sh
-        ./exe_server_master_sa_job.sh
+        chmod +x ./exe_server_master_cs1_job.sh
+        ./exe_server_master_cs1_job.sh
         ```
       - Calls `exe_server_helper_cs1_job.sh` to create SLURM jobs for sensitivity analysis. 
       - Calls `execution_script_cs1.ipynb` to execute script for Case Study 1 on SLURM.  
@@ -205,7 +205,7 @@ To replicate the results from the paper, follow these steps:
     - **For *Case Study 2***: 
         ```bash
         chmod +x ./exe_server_master_cs2_job.sh 
-        sbatch ./exe_server_master_cs2_job.sh
+        ./exe_server_helper_cs1_job.sh
         ```
       - Open and execute the notebook `monte_carlo_cs2.ipynb`.
     - **For *Case Study 3***: 

@@ -22,7 +22,7 @@ BASE_DIR="/hkfs/home/haicore/iai/ii6824/Documents/PIDE"
 OUTPUT_NB_DIR="/hkfs/home/haicore/iai/ii6824/Documents/PIDE/output/notebook"
 OUTPUT_DIR="/hkfs/home/haicore/iai/ii6824/Documents/PIDE/output"
 PYTHON_ENV="/hkfs/home/haicore/iai/ii6824/env/39_my_grid_env"
-JUPYTER_NOTEBOOK="/hkfs/home/haicore/iai/ii6824/Documents/PIDE/monte_carlo_cs1.ipynb" # Execution script over one year  execution_script_cs1
+JUPYTER_NOTEBOOK="/hkfs/home/haicore/iai/ii6824/Documents/PIDE/execution_script_cs1.ipynb" # Execution script over one year  execution_script_cs1
 
 # Logging setup
 # Generate a log file name with current date and hour

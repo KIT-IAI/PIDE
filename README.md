@@ -8,7 +8,7 @@ This repository contains the Python implementation and resources to reproduce ou
 (The paper is currently under review in Energy Informatics journal as part of the collection "Digital Innovations for Sustainable and Resilient Energy Systems".)
 
 ---
-### 1.Repository Overview
+### 1. Repository Overview
 
 The provided Python-based framework, **PIDE**, implements active voltage control for low-voltage (LV) electrical distribution grids using inverter-based control of distributed energy resources (DERs). The framework supports both decentralized and distributed grid control strategies and adheres to the VDE-AR-N 4105 and EN50160 regulatory standards for providing ancillary services, such as reactive power control. 
 
@@ -52,7 +52,7 @@ This repository is structured in a few key folders:
 ```
 ---
 
-### 2.BACKGROUND 
+### 2. BACKGROUND 
 European power system hierarchy includes four primary levels: extra high voltage (220–400 kV), high voltage (**HV**, 60–220 kV), medium voltage (**MV**, 6–20 kV), and low voltage (**LV**, 230–400 V) grids, interconnected via transformers. 
 The power generated from traditional large power plants and offshore wind farms feeds into the extra high and high voltage grids. 
 Larger photovoltaic plants generally link to the medium voltage grid. 
@@ -62,9 +62,7 @@ Major industrial consumers directly connect to the high-voltage grid, while smal
 
 **Fig. 1: Illustration of the European Power System showing interactions and connections via transformers between the transmission grid, inclusive of extra high voltage, the distribution grid, comprising high-voltage (indicated in red), medium-voltage (shown in yellow), and LV (represented in black). Power absorption is depicted in red arrows, while power injection into the higher and lower levels is indicated with green arrows.**
 
----
-
-### Problem Formulation: V&Q Control of DERs
+### 3. Problem Formulation: V&Q Control of DERs
 
 The reactive power control indirectly influences the active power $p_{j}^{DER}$, with the separate inverters apparent powers for PV $s_{j}^{PV}$ and BES $s_{j}^{BES}$ systems determining the operating constraints:
 
@@ -78,17 +76,11 @@ $$
 \Delta V_{ij} = \frac{r_{ij} \left( p_{j}^{Load} - p_{j}^{DER} \right) + x_{ij} \left( q_{j}^{Load} - q_{j}^{DER} \right)}{V_{j}}
 $$
 
-where $V_{i}$ is the parent busbar's voltage, which serves as a reference value. The terms $r_{ij}$ and $x_{ij}$ denote the resistance and reactance, respectively, between buses $i$ and $j$ as depicted in Figure 2.
-
-The control strategies we've implemented for low voltage grids, as visualized below, are specifically depicted in Figure 3.
-
----
+where $V_{i}$ is the parent busbar's voltage, which serves as a reference value. The terms $r_{ij}$ and $x_{ij}$ denote the resistance and reactance, respectively, between buses $i$ and $j$ as depicted in Figure 2. The control strategies we've implemented for low voltage grids, as visualized below, are specifically depicted in Figure 3.
 
 <img src="helper/img/06_problem_formulation.png" alt="Equivalent Circuit" style="width:30%; display: block; margin-bottom: 10px;">
 
 **Fig. 2: Equivalent circuit in a radial electrical distribution system including Loads, PVs, BESs, and MPVs.**
-
----
 
 <img src="helper/img/01_q_control.png" alt="Reactive Power Control" style="width:30%; display: block; margin-bottom: 10px;">
 
@@ -96,7 +88,7 @@ The control strategies we've implemented for low voltage grids, as visualized be
 **Fig. 3: Reactive power control for DERs, schematic representation of the methods based on the actual value (AV) for active power and the PCC voltage measurement, based on VDE-AR-N 4105 Grid Code.**
 
 ---
-### 3.Usage
+### 4. Usage
 Execute PIDE framework by using the **[__main__.py](__main__.py)** script as shown below. 
 
 1. **Command Line**
@@ -142,7 +134,7 @@ Arguments:
 
 2. Alternatively, you can modify the arguments in the **[__main__.py](__main__.py)** file to change the default value parameters.
 ---
-#### 4 Configuration Files:
+#### Configuration Files:
 
 Additional configuration settings are available in the `yaml` directory:
 
@@ -173,7 +165,7 @@ Additional configuration settings are available in the `yaml` directory:
     output_test_path: /hkfs/home/haicore/iai/<username>/PIDE/test
     ```
 ---
-### 5. Replicating Results:
+### 4. Replicating Results:
 
 To replicate the results from the paper, follow these steps:
 

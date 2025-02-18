@@ -1,0 +1,5 @@
+.ipynb_checkpoints/
+output/
+yaml/hpc/.ipynb_checkpoints/
+yaml/local/.ipynb_checkpoints/
+__pycache__/

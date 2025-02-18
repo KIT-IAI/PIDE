@@ -1,0 +1,205 @@
+# 01 GeneralConfig
+deltaTime : 15 # Simulation sample time in minutes
+maxTime : 180 # Total duration of the simulation
+# Set the Mini Photovoltaic (MPV) Settings for Grid Analysis
+mpv_settings:
+  mpv_flag: True # Optional flag parameter to enable/disable MPV analysis.
+  mpv_benchmark: "simbench" # MPV benchmarking source: (1) "simbench" profiles customized to MPV settings, (2) "mpvbench" based on real measurements, or (3) "customised" for user-defined data.
+  mpv_scaling: 0.60 # Scaling MPV (0.-10.0).
+  mpv_concentration_rate_percent: 100 # MPV Concentration rate as a percentage, ranging from 0.00 to 100.00.
+  mpv_inverter_apparent_power: 600 # (gamma1) Configurable apparent power maximum value of the MPV microinverter
+  mpv_solar_cell_capacity: 800 # (gamma2) Configurable maximum power value of the MPV solar cells
+  
+# Set the Monte Carlo Simulaton Settings
+mcs_settings:
+  flag_monte_carlo: True # Flag to enable Monte Carlo simulation mode.
+  num_monte_carlo_runs: 2 # Number of Monte Carlo simulation runs (default: 2).
+  loc: 0.00 # The location parameter for the normal distribution (default: 0.00).
+  error_std_dev: 0.001 # Standard deviation for the error in simulations.
+  seed_value: 42 # Initial Seed Value for Monte Carlo Simulations (default: 42, range 0-100).
+    # Reproducibility (with fixed seed_value=42, i.e., always the same random number generator sequence)
+    # Stochasticity (with "flag_monte_carlo: True" the "seed_value" starts with the initial value and 
+    # increases incrementally +1 with each new Monte Carlo simulation (given via "num_monte_carlo_runs"). 
+    # This generates different random number sequences with each call)
+  add_noise: True # Flag to indicate whether noise should be added to the simulation.
+# 01 cfg:
+cfg:
+  cfg_current_filename: ""
+  cfg_user: "config_battery_control_user.yaml"
+  cfg_default: "config_battery_control_default.yaml"
+# 02 cfg_settings:
+cfg_settings:
+  run_main_base_path: ""
+  helper_path: C:\Users\ii6824\Desktop\home\PIDE\helper
+  input_data_path: C:\Users\ii6824\Desktop\home\PIDE\input\data
+  output_data_path:  C:\Users\ii6824\Desktop\home\PIDE\output\data
+  output_test_path: C:\Users\ii6824\Desktop\home\PIDE\test
+  sequence_id_path: ""
+  output_data_type: ""
+  output_file_type: ".json" # [".csv", ".xls", ".xlsx", ".json", ".p"]
+  input_data_type: .pickle
+  write_to_rawdata: False # (1): True -> YAML save, (2): False -> YAML not save
+  cfg_default_plot_path: default_plot_config.yaml
+  cfg_user_plot_path: user_plot_config_grid.yaml
+# 02 DataConfig
+rawdata:
+  benchmark: "simbench" # (1): simbench, (2): customised
+  grid_code: toy_grid # (1): toy_grid, (2): toy_two_bus_grid, (3): rural_grid_15
+  net_name: rural_grid_15
+  sb_code: 1-LV-rural1--0-sw
+  scenario: "0-today" # ("0") The name of the scenario (1):"0-today", (2):"near future", (3):"future", or (4):"customised"
+  valid_sb_code: ["1-LV-rural1--0-sw", "1-LV-rural2--0-sw", "1-LV-rural3--0-sw", "1-LV-semiurb4--0-sw", "1-LV-semiurb5--0-sw", "1-LV-urban6--0-sw", "Customised"]
+  valid_sb_base_codes: ["1-LV-rural1--{}-sw", "1-LV-rural2--{}-sw", "1-LV-rural3--{}-sw","1-LV-semiurb4--{}-sw", "1-LV-semiurb5--{}-sw", "1-LV-urban6--{}-sw"]
+  valid_sb_scenario: ["0-today", "1-near future", "2-future"] # (1): today, (2): near future, (3): future
+  valid_sb_scenario_storage: ["1-near future", "2-future"] # (1): near future, (2): future
+  scaling:
+    pv: 1.0
+    load: 1.0
+    wind: 1.0
+    storage: 1.0
+  soc_initial: 5.0 # Initial values for the state of charge of the storage (0.00-100.00).
+  load_case: lPV
+# 03 RegulationStandardConfig (VDE/IEEE):
+regulation_standard_modes: ["vde", "ieee"] #,"datasource"
+standard_modes: ["deadband", "base", "a", "b", "customised"]
+# 03 ControlModesConfig
+control_modes:
+  timeseries_ctrl: "manual"
+  # (1): 'control_module' (PandaPower Time Series Simulation)
+  # (2): 'test_mode' (Test Control Rules)
+  # (3): 'manual' (Manual Time Series Simulation)
+  pv_ctrl: "constant_power_factor_active_power_ctrl" 
+  # *(1): 'datasource' RawData
+  # *(2): `voltage_reactive_power_ctrl` Reactive Power-Voltage (Q(U)) 
+  # *(3): `power_factor_active_power_ctrl` Reactive Power-Active Power (Q(P))  
+  # *(4): `constant_power_factor_active_power_ctrl` Constant Power Factor (cos phi_target,const)  (constant_power_factor_active_power_ctrl name anpassen)
+  storage_p_ctrl: "datasource"
+  # (1): 'datasource' RawData
+  # (2): 'rbc_solar_battery_ctrl'
+  # (3): 'rbc_load_battery_ctrl'
+  # (4): 'rbc_load_battery_daynight_ctrl'
+  # (5): 'rlc_battery_ctrl'
+  storage_q_ctrl: "constant_power_factor_active_power_ctrl"
+  # *(1): 'datasource' RawData -> Q -> zero
+  # *(1): `voltage_reactive_power_ctrl` Reactive Power-Voltage (Q(U)) 
+  # *(2): `constant_power_factor_active_power_ctrl` Constant Power Factor (cos phi_target,const)  (constant_power_factor_active_power_ctrl name anpassen)
+
+# 04 SimulationConfig
+sim:
+  time_mode: "manual"
+  # (1): "manual"
+  # (2): "random" (testen)
+  resolution: 15 
+  # Simulation resolution, e.g., 15min -> 96 steps_per_day
+  episode_start_hour: 0 
+  # Start hour of the episode (0-24).
+  episode_start_day: 0 
+  # Start day of the episode (0-354).
+  episode_start_min_interval: 0
+  # Starting interval (0-3).
+  episode_limit: 96*3 
+  # Maximum number of time steps in an episode.
+  max_iterations: 180 
+  # Maximum number of iterations. for example: 480=96*5= 5 days max_iterations
+
+# 05 GridCriticalityConfig
+criticality:
+  transformer_max: 100.00 # Maximum tolerance limit for transformer overheating
+  lines_max: 90.00 # Maximum tolerance limit for line congestion
+  v_min: 0.900 # Lower voltage failure limit
+  v_max: 1.100 # Upper voltage failure limit
+  v_min_max_delta: 0.100 # Deviation from current voltage
+  v_crit_lower: 0.920 # Lower critical voltage limit
+  v_crit_upper: 1.085 # Upper critical voltage limit
+  v_delta_threshold : 0.01 # Voltage difference threshold
+  v_max_threshold : 1.035 # Critical limit for voltage jumps for the current time interval
+#datasource:  
+# standard_mode: "empty"
+# deadband:
+# v_nom: 1.00 # Original nominal/reference voltage
+# 07.1 StandardModeConfig_vde (VDE-AR-N 4105:2018-11)Status: Active Standard
+vde:  
+  standard_mode: "deadband"
+  deadband:
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 0.97 # "Medium_low"
+    v_3: 1.00 # "Medium"
+    v_4: 1.03 # "Medium_high"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_low_gain: 0.03 # 0.03
+    v_high_gain: 0.03 # 0.03
+    v_deadband_gain: 0.06 # 0.00
+  base:
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 1.00 # "Medium"
+    v_3: 1.00 # "Medium"
+    v_4: 1.00 # "Medium"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_low_gain: 0.00 # 0.00
+    v_high_gain: 0.00 # 0.00
+    v_deadband_gain: 0.00 # 0.00
+  customised: # (for example IEEE Std 1547-2018)
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 1.00 # "Medium"
+    v_3: 1.00 # "Medium"
+    v_4: 1.00 # "Medium"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_low_gain: 0.00 # 0.00
+    v_high_gain: 0.00 # 0.00
+    v_deadband_gain: 0.00 # 0.00
+ieee:
+  standard_mode: "a"
+  a:
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 1.00 # "Medium"
+    v_3: 1.00 # "Medium"
+    v_4: 1.00 # "Medium"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_low_gain: 0.00 # 0.00
+    v_high_gain: 0.00 # 0.00
+    v_deadband_gain: 0.00 # 0.00
+  b:
+    v_nom: 1.00 # Original nominal/reference voltage
+    v_nom_net: 1.00 # Grid nominal/reference voltage
+    v_1: 0.93 # "Low" (0.93)
+    v_2: 1.00 # "Medium"
+    v_3: 1.00 # "Medium"
+    v_4: 1.00 # "Medium"
+    v_5: 1.07 # "High" (1.07)
+    ###
+    v_low_gain: 0.00  # 0.00
+    v_high_gain: 0.00  # 0.00
+    v_deadband_gain: 0.00  # 0.00
+# 08.1 RBCConfig
+rbc:
+  rendering_initialized: True
+  alpha: 0.5
+# 08.2 RLCConfig
+rlc:
+  alg: 0.5
+  state_space: ["pv", "demand", "reactive", "vm_pu", "va_degree"]
+  voltage_barrier_type: "l1" # "l1", "l2", "bowl", "courant_beltrami", "bump"
+  voltage_weight: 1.0
+  q_weight: 0.1
+  line_weight: null
+  dq_dv_weight: null
+  history: 1
+  pv_scale: 1.0
+  demand_scale: 1.0
+  state_space: ["pv", "demand", "reactive", "vm_pu", "va_degree"]
+  action_scale: 0.8
+  action_bias: 0
+  mode: null # distributed / decentralised
+  reset_action: True

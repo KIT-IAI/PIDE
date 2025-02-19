@@ -26,6 +26,7 @@ deepdiff==8.2.0
 defusedxml==0.7.1
 distlib==0.3.9
 entrypoints==0.4
+et_xmlfile==2.0.0
 exceptiongroup==1.2.2
 executing==2.1.0
 fastjsonschema==2.21.1
@@ -80,6 +81,7 @@ notebook_shim==0.2.4
 numba==0.56.4
 numpy==1.23.5
 oauthlib==3.2.2
+openpyxl==3.1.5
 orderly-set==5.3.0
 overrides==7.7.0
 packaging==24.2

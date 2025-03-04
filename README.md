@@ -4,7 +4,7 @@
 
 # PIDE
 
-**⚠️ Note**: **Last update was on 19.02.2025**.
+**⚠️ Note**: **Last update was on 04.03.2025**.
 
 This repository contains the Python implementation and resources to reproduce our work titled: **PIDE: Photovoltaic Integration Dynamics and Efficiency for Autonomous Control on Power Distribution Grids**. 
 
@@ -221,11 +221,15 @@ If you use this framework in your research, please cite the following: [paper](u
 - BibTeX format:
 ```bibtex
 @article{Demirel2025,
-  author    = {Demirel, Gökhan and Fernengel, Natascha and Grafenhorst, Simon and Förderer, Kevin and Hagenmeyer, Veit},
-  title     = {{PIDE: Photovoltaic Integration Dynamics and Efficiency for Autonomous Control on Power Distribution Grids}},
+  title     = {PIDE: Photovoltaic integration dynamics and efficiency for autonomous control on power distribution grids},
+  author    = {Demirel, Gökhan and Fernengel, Natascha and Grafenhorst, Simon and F\"orderer, Kevin and Hagenmeyer, Veit},
   journal   = {Energy Informatics},
+  volume    = {8},
+  number    = {1},
+  pages     = {32},
   year      = {2025},
-  note      = {accepted for publication in the Energy Informatics journal. A link to the published article will be provided soon.}
+  doi       = {10.1186/s42162-025-00489-6},
+  url       = {https://doi.org/10.1186/s42162-025-00489-6}
 }
 ```
 

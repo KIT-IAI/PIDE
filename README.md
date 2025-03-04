@@ -6,7 +6,7 @@
 
 **⚠️ Note**: **Last update was on 04.03.2025**.
 
-This repository contains the Python implementation and resources to reproduce our work titled: **PIDE: Photovoltaic Integration Dynamics and Efficiency for Autonomous Control on Power Distribution Grids**. 
+This repository contains the Python implementation and resources to reproduce our work titled: **[PIDE: Photovoltaic Integration Dynamics and Efficiency for Autonomous Control on Power Distribution Grids](https://doi.org/10.1186/s42162-025-00489-6)**.
 
 ---
 ### 1. Repository Overview

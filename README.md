@@ -5,10 +5,13 @@
 [![Python](https://img.shields.io/badge/Python-3.9.18-blue?logo=python)](https://www.python.org/downloads/release/python-3918/)
 [![License](https://img.shields.io/badge/License-MIT-green?logo=opensource)](./LICENSE)
 [![Code Style](https://img.shields.io/badge/Code%20Style-black-000000.svg?logo=python)](https://github.com/psf/black)
+[![](https://img.shields.io/badge/Contact-goekhan.demirel%40kit.edu-yellow?label=Contact)](goekhan.demirel@kit.edu)
 [![DOI](https://img.shields.io/badge/DOI-10.1145%2F12345678.12345678-orange?logo=doi)](https://doi.org/10.1186/s42162-025-00489-6)
 
+![MPVBenchLogo](helper/icons/pide_icon.svg)
 
-# PIDE
+<h1 align="center">PIDE: Photovoltaic integration dynamics and efficiency for autonomous control on power distribution grids</h1>
+
 
 **⚠️ Note**: *Last update on 08.07.2025*
 
@@ -17,7 +20,8 @@ This repository contains the Python implementation and resources to reproduce ou
 ---
 ### 1. Repository Overview
 
-![MPVBenchLogo](helper/icons/pide_icon.svg)
+<details>
+  <summary>Click to expand/collapse</summary>
 
 The provided Python-based framework, **PIDE**, implements active voltage control for low-voltage (LV) electrical distribution grids using inverter-based control of distributed energy resources (DERs). The framework supports both decentralized and distributed grid control strategies and adheres to the VDE-AR-N 4105 and EN50160 regulatory standards for providing ancillary services, such as reactive power control. 
 
@@ -56,9 +60,14 @@ This repository is structured in a few key folders:
 ├── monte_carlo_cs3.ipynb                 <- Notebook for Case Study 3.
 └── requirements.txt                      <- Dependencies required.
 ```
----
+
+</details>
 
 ### 2. BACKGROUND 
+
+<details>
+  <summary>Click to expand/collapse</summary>
+
 European power system hierarchy includes four primary levels: extra high voltage (220–400 kV), high voltage (**HV**, 60–220 kV), medium voltage (**MV**, 6–20 kV), and low voltage (**LV**, 230–400 V) grids, interconnected via transformers. 
 The power generated from traditional large power plants and offshore wind farms feeds into the extra high and high voltage grids. 
 Larger photovoltaic plants generally link to the medium voltage grid. 
@@ -68,7 +77,12 @@ Major industrial consumers directly connect to the high-voltage grid, while smal
 
 **Fig. 1: Illustration of the European Power System showing interactions and connections via transformers between the transmission grid, inclusive of extra high voltage, the distribution grid, comprising high-voltage (indicated in red), medium-voltage (shown in yellow), and LV (represented in black). Power absorption is depicted in red arrows, while power injection into the higher and lower levels is indicated with green arrows.**
 
+</details>
+
 ### 3. Problem Formulation: V&Q Control of DERs
+
+<details>
+  <summary>Click to expand/collapse</summary>
 
 The reactive power control indirectly influences the active power $p_{j}^{DER}$, with the separate inverters apparent powers for PV $s_{j}^{PV}$ and BES $s_{j}^{BES}$ systems determining the operating constraints:
 
@@ -93,14 +107,21 @@ where $V_{i}$ is the parent busbar's voltage, which serves as a reference value.
 
 **Fig. 3: Reactive power control for DERs, schematic representation of the methods based on the actual value (AV) for active power and the PCC voltage measurement, based on VDE-AR-N 4105 Grid Code.**
 
----
+</details>
+
 ### 4. Usage
+
+<details>
+  <summary>Click to expand/collapse</summary>
+
 Execute PIDE framework by using the **[__main__.py](__main__.py)** script as shown below. 
 
 1. **Command Line**
+
 ```bash
 python __main__.py --pv_ctrl voltage_reactive_power_ctrl --storage_p_ctrl rbc_pvbes_distributed_sc_ctrl
 ```
+
 ```bash
 python PIDE --pv_ctrl voltage_reactive_power_ctrl --storage_p_ctrl rbc_pvbes_distributed_sc_ctrl
 ```
@@ -170,8 +191,13 @@ Additional configuration settings are available in the `yaml` directory:
     output_data_path: /hkfs/home/haicore/iai/<username>/PIDE/output/data
     output_test_path: /hkfs/home/haicore/iai/<username>/PIDE/test
     ```
----
-### 4. Replicating Results:
+
+</details>
+
+### 5. Replicating Results:
+
+<details>
+  <summary>Click to expand/collapse</summary>
 
 To replicate the results from the paper, follow these steps:
 
@@ -217,13 +243,16 @@ To replicate the results from the paper, follow these steps:
         ``` 
       - Open and execute the notebook `monte_carlo_cs3.ipynb`.
 
----
+</details>
 
 ## License
 This code is licensed under the [MIT License](LICENSE).
 
-## Citation
-If you use this framework in your research, please cite the following: [paper](under review):
+<h2>Citation &#128221;</h2>
+<p>
+If you use this framework in your research, please consider citing our paper &#128221; and giving the repository a star &#11088;:
+</p>
+
 - BibTeX format:
 ```bibtex
 @article{Demirel2025,
@@ -244,6 +273,3 @@ This work was supported in part by:
 - The Energy System Design (ESD) Project (Structure 37.12.02).
 - The Helmholtz Association (HGF) Initiative and Networking Fund through Helmholtz AI.
 - The HAICORE@KIT partition.
-
-#### Contact Information
-For any issues or any intention of cooperation, please feel free to contact me at [goekhan.demirel@kit.edu](goekhan.demirel@kit.edu).

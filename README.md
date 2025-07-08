@@ -2,9 +2,15 @@
  <img src="helper/icons/icon_kit.png" width="10%" hspace="10"/> 
 </p>
 
+[![Python](https://img.shields.io/badge/Python-3.9.18-blue?logo=python)](https://www.python.org/downloads/release/python-3918/)
+[![License](https://img.shields.io/badge/License-MIT-green?logo=opensource)](./LICENSE)
+[![Code Style](https://img.shields.io/badge/Code%20Style-black-000000.svg?logo=python)](https://github.com/psf/black)
+[![DOI](https://img.shields.io/badge/DOI-10.1145%2F12345678.12345678-orange?logo=doi)](https://doi.org/10.1186/s42162-025-00489-6)
+
+
 # PIDE
 
-**⚠️ Note**: **Last update was on 04.03.2025**.
+**⚠️ Note**: *Last update on 08.07.2025*
 
 This repository contains the Python implementation and resources to reproduce our work titled: **[PIDE: Photovoltaic Integration Dynamics and Efficiency for Autonomous Control on Power Distribution Grids](https://doi.org/10.1186/s42162-025-00489-6)**.
 

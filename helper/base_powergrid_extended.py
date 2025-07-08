@@ -1,9 +1,9 @@
 """
 base_powergrid_extended Module
 ------------------------------
-This module extends the functionality of grid storage control in Pandapower. It includes classes 
-for implementing various control strategies for grid storage elements and analyzing time series 
-simulations. The module is built upon the `BasePowerGridCore` class and provides additional 
+This module extends the functionality of grid storage control in Pandapower. It includes classes
+for implementing various control strategies for grid storage elements and analyzing time series
+simulations. The module is built upon the `BasePowerGridCore` class and provides additional
 capabilities for storage control and evaluation.
 """
 
@@ -17,20 +17,23 @@ import pandas as pd
 # Importing parent module
 from .base_powergrid_core import BasePowerGridCore
 
+
 class JSONEncoder(json.JSONEncoder):
-    """A custom JSON encoder that supports converting objects with a 'to_json' 
+    """A custom JSON encoder that supports converting objects with a 'to_json'
     method to JSON format."""
+
     def default(self, o):
-        if hasattr(o, 'to_json'):
-            return o.to_json(orient='records')
+        if hasattr(o, "to_json"):
+            return o.to_json(orient="records")
         return json.JSONEncoder.default(self, o)
+
 
 class BasePowerGridExtended(BasePowerGridCore):
     """
-    A class (BasePowerGridExtended) representing a power grid reinforcement 
-    learning strategy. This class inherits from the BasePowerGridCore and adds 
-    attributes and methods specific to reinforcement learning strategies. 
-    The reinforcement learning algorithm is expected to interact with this 
+    A class (BasePowerGridExtended) representing a power grid reinforcement
+    learning strategy. This class inherits from the BasePowerGridCore and adds
+    attributes and methods specific to reinforcement learning strategies.
+    The reinforcement learning algorithm is expected to interact with this
     class through its public methods.
     Attributes:
     (1): Joint Parameters
@@ -82,6 +85,7 @@ class BasePowerGridExtended(BasePowerGridCore):
         action_space (gym.spaces): The action space for the simulation.
         state_space (gym.spaces): The state space for the simulation.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # (1): Joint Parameters
@@ -90,10 +94,10 @@ class BasePowerGridExtended(BasePowerGridCore):
         self.args = self.args
         self.profiles = {}
         self.log_variables = {}
-        self.file_name_log_variables = 'log_variables'
+        self.file_name_log_variables = "log_variables"
         self.column_sheet_mapping = []
         self.output = {}
-        self.file_name, self.file_path = '', ''
+        self.file_name, self.file_path = "", ""
         self.resolution = self.resolution
         self.base_sim_steps, self.sim_steps, self.max_steps = None, None, None
         # Identify low-voltage (LV) buses in the grid
@@ -110,7 +114,7 @@ class BasePowerGridExtended(BasePowerGridCore):
         self.first_date_simulation = None
         self.last_date_simulation = None
         # (2)-Rule-Based-Control (RBC) PandaPower Time Series Simulation-
-        self.output_writer = None # Save OutputWriter instance
+        self.output_writer = None  # Save OutputWriter instance
         self.variables_to_log = None
         self.variables_to_store = None
 
@@ -147,9 +151,9 @@ class BasePowerGridExtended(BasePowerGridCore):
         Store the logged variables in a dictionary to be written to file.
         This function stores simulation results into output data frames,
         following a pre-defined mapping of log variables to column sheet
-        names and column names. 
-            The variables are stored in pandas dataframes with specific column 
-            names, which are mapped to the specific variables. 
+        names and column names.
+            The variables are stored in pandas dataframes with specific column
+            names, which are mapped to the specific variables.
             The dataframes are then stored in a larger dictionary with specific
             keys that correspond to the specific variables.
         This larger dictionary is used to write the dataframes to file using the
@@ -157,106 +161,183 @@ class BasePowerGridExtended(BasePowerGridCore):
         """
         # Definition of the default log variables
         self.column_sheet_mapping = [
-            ("load_active [MW] (res_load.p_mw)", "res_load.p_mw",
-             self.net.load.index.to_list()),
-            ("load_reactive [MVar] (res_load.q_mvar)", "res_load.q_mvar",
-             self.net.load.index.to_list()),
-            ("pv_active [MW] (sgen.p_mw)", "sgen.p_mw",
-              self.net.sgen.index.to_list()),
-            ("pv_reactive [MVar] (sgen.q_mvar)", "sgen.q_mvar",
-              self.net.sgen.index.to_list()),
-            ("bus_active_demand [MW] (res_bus.p_mw)", "res_bus.p_mw",
-             self.net.bus.index.to_list()),
-            ("bus_reactive_demand [Mvar] (res_bus.q_mvar)", "res_bus.q_mvar",
-             self.net.bus.index.to_list()),
-            ("bus_voltage [p.u] (res_bus.vm_pu)", "res_bus.vm_pu",
-             self.net.bus.index.to_list()),
-            ("bus_voltage_angle [degree] (res_bus.va_degree)", "res_bus.va_degree",
-             self.net.bus.index.to_list()),
-            ("ext_grid_active_supply [MW] (res_ext_grid.p_mw)", "res_ext_grid.p_mw",
-             self.net.ext_grid.index.to_list()),
-            ("ext_grid_reactive_supply [MVar] (res_ext_grid.q_mvar)", "res_ext_grid.q_mvar",
-             self.net.ext_grid.index.to_list()),
-            ("line_loss [MW] (res_line.pl_mw)", "res_line.pl_mw",
-             self.net.line.index.to_list()),
-            ("line_loss [MVar] (res_line.ql_mvar)", "res_line.ql_mvar",
-             self.net.line.index.to_list()),
-            ("line_loading [%] (res_line.loading_percent)", "res_line.loading_percent",
-             self.net.line.index.to_list()),
-            ("trafo loading (res_trafo.loading_percent)", "res_trafo.loading_percent",
-             self.net.trafo.index.to_list()),
-            ("trafo_active [MW] (res_trafo.p_hv_mw)", "res_trafo.p_hv_mw",
-             self.net.trafo.index.to_list()),
-            ("trafo_reactive [Mvar] (res_trafo.q_hv_mvar)", "res_trafo.q_hv_mvar",
-             self.net.trafo.index.to_list()),
-            ("trafo_active power losses [MW] (res_trafo.pl_mw)", "res_trafo.pl_mw",
-             self.net.trafo.index.to_list()),
-            ("trafo_reactive power losses [MVar] (res_trafo.ql_mvar)", "res_trafo.ql_mvar",
-             self.net.trafo.index.to_list())
+            (
+                "load_active [MW] (res_load.p_mw)",
+                "res_load.p_mw",
+                self.net.load.index.to_list(),
+            ),
+            (
+                "load_reactive [MVar] (res_load.q_mvar)",
+                "res_load.q_mvar",
+                self.net.load.index.to_list(),
+            ),
+            ("pv_active [MW] (sgen.p_mw)", "sgen.p_mw", self.net.sgen.index.to_list()),
+            (
+                "pv_reactive [MVar] (sgen.q_mvar)",
+                "sgen.q_mvar",
+                self.net.sgen.index.to_list(),
+            ),
+            (
+                "bus_active_demand [MW] (res_bus.p_mw)",
+                "res_bus.p_mw",
+                self.net.bus.index.to_list(),
+            ),
+            (
+                "bus_reactive_demand [Mvar] (res_bus.q_mvar)",
+                "res_bus.q_mvar",
+                self.net.bus.index.to_list(),
+            ),
+            (
+                "bus_voltage [p.u] (res_bus.vm_pu)",
+                "res_bus.vm_pu",
+                self.net.bus.index.to_list(),
+            ),
+            (
+                "bus_voltage_angle [degree] (res_bus.va_degree)",
+                "res_bus.va_degree",
+                self.net.bus.index.to_list(),
+            ),
+            (
+                "ext_grid_active_supply [MW] (res_ext_grid.p_mw)",
+                "res_ext_grid.p_mw",
+                self.net.ext_grid.index.to_list(),
+            ),
+            (
+                "ext_grid_reactive_supply [MVar] (res_ext_grid.q_mvar)",
+                "res_ext_grid.q_mvar",
+                self.net.ext_grid.index.to_list(),
+            ),
+            (
+                "line_loss [MW] (res_line.pl_mw)",
+                "res_line.pl_mw",
+                self.net.line.index.to_list(),
+            ),
+            (
+                "line_loss [MVar] (res_line.ql_mvar)",
+                "res_line.ql_mvar",
+                self.net.line.index.to_list(),
+            ),
+            (
+                "line_loading [%] (res_line.loading_percent)",
+                "res_line.loading_percent",
+                self.net.line.index.to_list(),
+            ),
+            (
+                "trafo loading (res_trafo.loading_percent)",
+                "res_trafo.loading_percent",
+                self.net.trafo.index.to_list(),
+            ),
+            (
+                "trafo_active [MW] (res_trafo.p_hv_mw)",
+                "res_trafo.p_hv_mw",
+                self.net.trafo.index.to_list(),
+            ),
+            (
+                "trafo_reactive [Mvar] (res_trafo.q_hv_mvar)",
+                "res_trafo.q_hv_mvar",
+                self.net.trafo.index.to_list(),
+            ),
+            (
+                "trafo_active power losses [MW] (res_trafo.pl_mw)",
+                "res_trafo.pl_mw",
+                self.net.trafo.index.to_list(),
+            ),
+            (
+                "trafo_reactive power losses [MVar] (res_trafo.ql_mvar)",
+                "res_trafo.ql_mvar",
+                self.net.trafo.index.to_list(),
+            ),
         ]
         # Add the log variables for the storage case
         if self.is_storage_scenario:
             optional_storage_column_sheet_mapping = [
-                ("storage_active (storage.p_mw)", "storage.p_mw",
-                 self.net.storage.index.to_list()),
-                ("storage_reactive (storage.q_mvar)", "storage.q_mvar",
-                 self.net.storage.index.to_list()),
-                ("storage_soc_percent (storage.soc_percent)", "storage.soc_percent",
-                 self.net.storage.index.to_list()),
-                ("storage_discharge_power_loss (storage.discharge_power_loss)",
-                 "storage.discharge_power_loss",
-                 self.net.storage.index.to_list())
+                (
+                    "storage_active (storage.p_mw)",
+                    "storage.p_mw",
+                    self.net.storage.index.to_list(),
+                ),
+                (
+                    "storage_reactive (storage.q_mvar)",
+                    "storage.q_mvar",
+                    self.net.storage.index.to_list(),
+                ),
+                (
+                    "storage_soc_percent (storage.soc_percent)",
+                    "storage.soc_percent",
+                    self.net.storage.index.to_list(),
+                ),
+                (
+                    "storage_discharge_power_loss (storage.discharge_power_loss)",
+                    "storage.discharge_power_loss",
+                    self.net.storage.index.to_list(),
+                ),
             ]
             self.column_sheet_mapping.extend(optional_storage_column_sheet_mapping)
         # Iterate over the mapping list and create the output
-        for log_description , log_name, element_ids in self.column_sheet_mapping:
+        for log_description, log_name, element_ids in self.column_sheet_mapping:
             if self.simulation_mode == "pandapower":
-                data_frame = (self.log_variables[log_name] if isinstance(self.log_variables[log_name],
-                                                                    pd.DataFrame)
-                              else pd.DataFrame(self.log_variables[log_name]))
+                data_frame = (
+                    self.log_variables[log_name]
+                    if isinstance(self.log_variables[log_name], pd.DataFrame)
+                    else pd.DataFrame(self.log_variables[log_name])
+                )
             else:
                 data_frame = pd.DataFrame(self.log_variables[log_name])
                 data_frame.columns = element_ids
             self.output[log_name] = data_frame
 
     def write_to_disk(self):
-        """ Writes the output stored in `self.output` to disk. 
+        """Writes the output stored in `self.output` to disk.
         The function saves the output to disk in multiple file formats, including
         JSON, Excel, and pickle.
         The file format is determined by the `output_file_type` attribute of the
         `Output` object.
         """
         # Define log variable filename
-        self.file_name = os.path.join(self.output_data_path,
-                                      self.file_name_log_variables) # absolute path
+        self.file_name = os.path.join(
+            self.output_data_path, self.file_name_log_variables
+        )  # absolute path
         if self.output_data_path is not None:
             try:
-                if self.output_file_type in [".csv", ".xls", ".xlsx", ".json", ".p", ".pickle"]:
-                    self.file_path = os.path.join(self.file_name+self.output_file_type)
+                if self.output_file_type in [
+                    ".csv",
+                    ".xls",
+                    ".xlsx",
+                    ".json",
+                    ".p",
+                    ".pickle",
+                ]:
+                    self.file_path = os.path.join(
+                        self.file_name + self.output_file_type
+                    )
                 else:
-                    raise UserWarning("\n----------Write to Disk (1)----------\n"
-                                      " Specify output file with "
-                                      " .csv, .xls, .xlsx, .p or .json ending")
+                    raise UserWarning(
+                        "\n----------Write to Disk (1)----------\n"
+                        " Specify output file with "
+                        " .csv, .xls, .xlsx, .p or .json ending"
+                    )
             except ValueError as error:
-                print("\n----------Write to Disk (1)----------\n"
-                      f"Error occurred: {error}")
+                print(
+                    "\n----------Write to Disk (1)----------\n"
+                    f"Error occurred: {error}"
+                )
         # Save in loop for all output file types
-        output_file_types = [".pickle",".xlsx",".json"]
+        output_file_types = [".pickle", ".xlsx", ".json"]
         print("\n----------Write to Disk (2)----------\n")
         print("log_variables output_file_path:        \n")
         for output_file_type in output_file_types:
             # self.output_file_type = output_file_type
-            self.file_path = os.path.join(self.output_data_path,
-                                          self.file_name_log_variables +
-                                          output_file_type)
+            self.file_path = os.path.join(
+                self.output_data_path, self.file_name_log_variables + output_file_type
+            )
             print(f"'{self.file_path}'")
             # Saves all parameters as object attributes to store in JSON
             if output_file_type == ".json":
-                with open(self.file_path, 'w', encoding='utf-8') as writer:
+                with open(self.file_path, "w", encoding="utf-8") as writer:
                     json.dump(self.output, writer, cls=JSONEncoder)
             # Saves all parameters as object attributes to store in pickle
-            elif output_file_type in [".p", ".pickle"] :
-                with open(self.file_path, 'wb') as writer:
+            elif output_file_type in [".p", ".pickle"]:
+                with open(self.file_path, "wb") as writer:
                     # write to the file using binary mode
                     pickle.dump(self.output, writer, protocol=pickle.HIGHEST_PROTOCOL)
             # Saves all parameters as object attributes to store in xlsx
@@ -265,14 +346,16 @@ class BasePowerGridExtended(BasePowerGridCore):
                     with pd.ExcelWriter(self.file_path) as writer:
                         for _, sheet_name, _ in self.column_sheet_mapping:
                             self.output[sheet_name].to_excel(
-                                writer, index=True, sheet_name=sheet_name)
+                                writer, index=True, sheet_name=sheet_name
+                            )
                 except ValueError as error:
                     if list(self.output.values())[0].shape[0] > 255:
                         raise ValueError(
                             "\n----------Write to Disk (2)----------\n"
                             "pandas.to_excel() is not capable to handle large data"
                             "with more than 255 columns. Please use other"
-                            "file_extensions instead, e.g. 'json'.") from error 
+                            "file_extensions instead, e.g. 'json'."
+                        ) from error
                     raise ValueError(error) from error
             elif output_file_type == ".csv":
                 raise NotImplementedError
@@ -299,28 +382,32 @@ class BasePowerGridExtended(BasePowerGridCore):
         """
         # Read from disk
         if output_file_type in [".csv", ".xls", ".xlsx", ".json", ".p", ".pickle"]:
-            read_file_path = os.path.join(read_filename+output_file_type)
+            read_file_path = os.path.join(read_filename + output_file_type)
         else:
-            raise UserWarning("Specify output file with .csv, .xls, .xlsx, .p or .json ending")
+            raise UserWarning(
+                "Specify output file with .csv, .xls, .xlsx, .p or .json ending"
+            )
         # read JSON
         if output_file_type == ".json":
-            with open(read_file_path, 'r', encoding='utf-8') as filepath:
+            with open(read_file_path, "r", encoding="utf-8") as filepath:
                 output_json = json.load(filepath)
-                data = { key: pd.read_json(output_json[key]) for key in output_json}
+                data = {key: pd.read_json(output_json[key]) for key in output_json}
         # read pickle
         elif output_file_type in [".p", ".pickle"]:
-            with open(read_file_path, 'rb') as reader:
+            with open(read_file_path, "rb") as reader:
                 data = pickle.load(reader)
         # read xlsx
         elif output_file_type in [".xls", ".xlsx"]:
             data = {}
             for key, sheet_name, column_name in self.column_sheet_mapping:
-                data_frame = pd.read_excel(read_file_path, sheet_name=sheet_name,index_col=0)
+                data_frame = pd.read_excel(
+                    read_file_path, sheet_name=sheet_name, index_col=0
+                )
                 data_frame.columns = column_name
                 data[sheet_name] = data_frame
         return data
 
-    def read_check(self,df1, df2):
+    def read_check(self, df1, df2):
         """
         Compares two pandas dataframes to check if they are identical within a
         specified tolerance.
@@ -340,16 +427,20 @@ class BasePowerGridExtended(BasePowerGridCore):
         tolerance = 1e-6
         for _, key, _ in self.column_sheet_mapping:
             if (df1[key] - df2[key]).abs().max().max() > tolerance:
-                return print(f"\n----------Read Check (1)----------\n"
-                             f"DataFrames df1 and df2 are outside the "
-                             f"range of tolerance {tolerance}.")
+                return print(
+                    f"\n----------Read Check (1)----------\n"
+                    f"DataFrames df1 and df2 are outside the "
+                    f"range of tolerance {tolerance}."
+                )
             print((df1[key] - df2[key]).abs().max().max())
-        return print(f"\n----------Read Check (1)----------\n"
-                     f"DataFrames df1 and df2 are identical each"
-                     f"within the tolerance value {tolerance}.")
+        return print(
+            f"\n----------Read Check (1)----------\n"
+            f"DataFrames df1 and df2 are identical each"
+            f"within the tolerance value {tolerance}."
+        )
 
     def get_grid_variables_to_log_or_store(self):
-        """ Returns a dictionary of grid component variables for both logging and storing purposes.
+        """Returns a dictionary of grid component variables for both logging and storing purposes.
         This includes standard variables and additional variables specific to storage scenarios.
         Returns:
             dict: A dictionary where each key is a component name and
@@ -364,7 +455,13 @@ class BasePowerGridExtended(BasePowerGridCore):
             "res_bus": ["p_mw", "q_mvar", "vm_pu", "va_degree"],
             "res_ext_grid": ["p_mw", "q_mvar"],
             "res_line": ["pl_mw", "ql_mvar", "loading_percent"],
-            "res_trafo": ["loading_percent", "p_hv_mw", "q_hv_mvar", "pl_mw", "ql_mvar"]
+            "res_trafo": [
+                "loading_percent",
+                "p_hv_mw",
+                "q_hv_mvar",
+                "pl_mw",
+                "ql_mvar",
+            ],
             # Additional variables can be added here...
         }
         # Include additional storage-related variables if in a storage scenario
@@ -392,10 +489,10 @@ class BasePowerGridExtended(BasePowerGridCore):
         time interval.
         """
         # Check which time mode is selected.
-        if self.time_mode == 'selected':
+        if self.time_mode == "selected":
             # Manual select time (simulation steps)
             self.get_selected_sim_intervals()
-        elif self.time_mode == 'random':
+        elif self.time_mode == "random":
             # Randomly select time range (simulation steps)
             self.get_random_sim_intervals()
         else:
@@ -403,7 +500,7 @@ class BasePowerGridExtended(BasePowerGridCore):
             self.get_default_sim_intervals()
 
     def get_selected_sim_intervals(self):
-        """ This function calculates the start time of the simulation episode in
+        """This function calculates the start time of the simulation episode in
         intervals, based on the selected start hour, start day, and interval
         resolution.
         It then determines the total number of intervals needed for the episode
@@ -411,22 +508,26 @@ class BasePowerGridExtended(BasePowerGridCore):
         simulation. The function returns the list of simulation intervals.
         """
         # Calculate the start time of the episode in intervals
-        interval_per_hour = 60 // self.resolution #(each interval is a fixed length of time)
-        start = self.episode_start_min_interval \
-            + (self.episode_start_hour * interval_per_hour) \
+        interval_per_hour = (
+            60 // self.resolution
+        )  # (each interval is a fixed length of time)
+        start = (
+            self.episode_start_min_interval
+            + (self.episode_start_hour * interval_per_hour)
             + (self.episode_start_day * 24 * interval_per_hour)
+        )
         # Determine the total number of intervals needed for the episode plus history
-        num_intervals = self.episode_limit #  + self.history + 1 # (with a margin of 1)
+        num_intervals = self.episode_limit  #  + self.history + 1 # (with a margin of 1)
         # Create a list of intervals that will be used for the simulation
         self.base_sim_steps = range(start, start + num_intervals)
-        highest_step, lowest_step = max(self.base_sim_steps),  min(self.base_sim_steps)
-        self.sim_steps = range(0, (highest_step-lowest_step)+1)
+        highest_step, lowest_step = max(self.base_sim_steps), min(self.base_sim_steps)
+        self.sim_steps = range(0, (highest_step - lowest_step) + 1)
         # define max number of steps
-        self.max_steps = highest_step-lowest_step - 1
+        self.max_steps = highest_step - lowest_step - 1
         self.print_simulation_timestamp_settings(lowest_step, highest_step)
 
     def get_random_sim_intervals(self):
-        """ This function resets the time stamp and retrieves one episode of
+        """This function resets the time stamp and retrieves one episode of
         data for PV histories, active load histories, and reactive load
         histories. It then sets the demand and PV.
         """
@@ -444,15 +545,14 @@ class BasePowerGridExtended(BasePowerGridCore):
         # This is necessary as the starting day and time are randomly generated
         self.get_selected_sim_intervals()
 
-
     def get_default_sim_intervals(self):
-        """ This function returns a range object representing the simulation
+        """This function returns a range object representing the simulation
         intervals for the default maximum number of iterations."""
         self.base_sim_steps = range(self.max_iterations)
         self.sim_steps = range(self.max_iterations)
-        highest_step, lowest_step = max(self.base_sim_steps),  min(self.base_sim_steps)
+        highest_step, lowest_step = max(self.base_sim_steps), min(self.base_sim_steps)
         # define max number of steps
-        self.max_steps = highest_step-lowest_step
+        self.max_steps = highest_step - lowest_step
         self.print_simulation_timestamp_settings(lowest_step, highest_step)
 
     def print_simulation_timestamp_settings(self, lowest_step, highest_step):
@@ -477,9 +577,11 @@ class BasePowerGridExtended(BasePowerGridCore):
             -------------------------------------------------------
         """
         self.first_date_simulation = self.time_data.loc[
-            self.time_data['timestamps'] == lowest_step].index[0]
+            self.time_data["timestamps"] == lowest_step
+        ].index[0]
         self.last_date_simulation = self.time_data.loc[
-            self.time_data['timestamps'] == highest_step].index[0]
+            self.time_data["timestamps"] == highest_step
+        ].index[0]
         print("-------------Simulation Timestamp settings-------------")
         print(f"Simulation Start Date:      {self.first_date_simulation}")
         print(f"Simulation End date:        {self.last_date_simulation}")
@@ -493,7 +595,7 @@ class BasePowerGridExtended(BasePowerGridCore):
         return np.random.choice(24)
 
     def _select_random_start_day(self):
-        """ This function randomly selects a start day (date) for an episode,
+        """This function randomly selects a start day (date) for an episode,
         based on the timestamp data in the simulation. It calculates the number
         of days between the first and last timestamp, and then selects a
         random day within that range that is at least episode_days away from
@@ -504,12 +606,13 @@ class BasePowerGridExtended(BasePowerGridCore):
         time_data = self.time_data
         timestamp_days = (time_data.index[-1] - time_data.index[0]).days
         self.resolution = (time_data.index[1] - time_data.index[0]).seconds // 60
-        assert self.resolution == self.resolution, \
-            f"Data format error, expected resolution: {self.resolution} " \
+        assert self.resolution == self.resolution, (
+            f"Data format error, expected resolution: {self.resolution} "
             f"but received time_delta: {self.resolution}. Verify data compatibility!"
-        episode_days = (self.episode_limit //
-                (24 * (60 // self.resolution))
-                + 1)  # (with a margin of 1)
+        )
+        episode_days = (
+            self.episode_limit // (24 * (60 // self.resolution)) + 1
+        )  # (with a margin of 1)
         return np.random.choice(timestamp_days - episode_days)
 
     def _select_random_start_interval(self):
@@ -521,7 +624,7 @@ class BasePowerGridExtended(BasePowerGridCore):
             into 4 intervals of 15 minutes each).
             It returns the selected start interval.
         """
-        return np.random.choice( 60 // self.resolution)
+        return np.random.choice(60 // self.resolution)
 
     def get_episode_pv_history(self):
         """The function returns the photovoltaic (PV) history for an episode
@@ -529,39 +632,47 @@ class BasePowerGridExtended(BasePowerGridCore):
         It returns the PV history as a numpy array."""
         episode_length = self.episode_limit
         history = self.history
-        start = self.episode_start_min_interval + \
-            (self.episode_start_hour * (60 // self.resolution) ) + \
-                (self.episode_start_day * 24 * (60 // self.resolution) )
-        nr_intervals = episode_length + history + 1 # (with a margin of 1)
-        episode_pv_history = self.pv_data[start:start + nr_intervals].values
+        start = (
+            self.episode_start_min_interval
+            + (self.episode_start_hour * (60 // self.resolution))
+            + (self.episode_start_day * 24 * (60 // self.resolution))
+        )
+        nr_intervals = episode_length + history + 1  # (with a margin of 1)
+        episode_pv_history = self.pv_data[start : start + nr_intervals].values
         return episode_pv_history
 
     def get_episode_active_load_history(self):
-        """ This function returns the active power histories for all loads in
+        """This function returns the active power histories for all loads in
         an episode based on the selected start hour, start day, and interval
         resolution. It returns the data source and returns the active power history.
         """
         episode_length = self.episode_limit
         history = self.history
-        start = self.episode_start_min_interval + \
-            (self.episode_start_hour * (60 // self.resolution) ) + \
-                (self.episode_start_day * 24 * (60 // self.resolution) )
-        nr_intervals = episode_length + history + 1 # (with a margin of 1)
+        start = (
+            self.episode_start_min_interval
+            + (self.episode_start_hour * (60 // self.resolution))
+            + (self.episode_start_day * 24 * (60 // self.resolution))
+        )
+        nr_intervals = episode_length + history + 1  # (with a margin of 1)
         episode_load_active_power_history = self.load_active_power_data[
-            start:start + nr_intervals].values
+            start : start + nr_intervals
+        ].values
         return episode_load_active_power_history
 
     def get_episode_reactive_load_history(self):
-        """ This function returns the reactive power histories for all loads in
+        """This function returns the reactive power histories for all loads in
         an episode based on the selected start hour, start day, and interval
         resolution. It returns the data source and returns the reactive power history.
         """
         episode_length = self.episode_limit
         history = self.history
-        start = self.episode_start_min_interval + \
-            (self.episode_start_hour * (60 // self.resolution) ) + \
-                (self.episode_start_day * 24 * (60 // self.resolution) )
-        nr_intervals = episode_length + history + 1 # (with a margin of 1)
+        start = (
+            self.episode_start_min_interval
+            + (self.episode_start_hour * (60 // self.resolution))
+            + (self.episode_start_day * 24 * (60 // self.resolution))
+        )
+        nr_intervals = episode_length + history + 1  # (with a margin of 1)
         episode_load_reactive_power_history = self.load_reactive_power_data[
-            start:start + nr_intervals].values
+            start : start + nr_intervals
+        ].values
         return episode_load_reactive_power_history

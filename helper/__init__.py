@@ -7,7 +7,7 @@ from .helper_powergrid_customised_grid import toy_grid
 from .helper_powergrid_evaluator import PowerGridEvaluator
 from .helper_powergrid_control_rbc_pp import PowerGridRuleBasedControlPP
 
-#from .helper_powergrid_renderer import PowerGridRenderer
+# from .helper_powergrid_renderer import PowerGridRenderer
 from .helper_powergrid_advanced_plot import PlotConfigManager
 from .notebook_utils import *
 

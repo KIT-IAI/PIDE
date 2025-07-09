@@ -12,18 +12,18 @@
 
 <h1 align="center">PIDE: Photovoltaic integration dynamics and efficiency for autonomous control on power distribution grids</h1>
 
-
-**⚠️ Note**: *Last update on 08.07.2025*
+**⚠️ Note**: _Last update on 09.07.2025_
 
 This repository contains the Python implementation and resources to reproduce our work titled: **[PIDE: Photovoltaic Integration Dynamics and Efficiency for Autonomous Control on Power Distribution Grids](https://doi.org/10.1186/s42162-025-00489-6)**.
 
 ---
+
 ### 1. Repository Overview
 
 <details>
   <summary>Click to expand/collapse</summary>
 
-The provided Python-based framework, **PIDE**, implements active voltage control for low-voltage (LV) electrical distribution grids using inverter-based control of distributed energy resources (DERs). The framework supports both decentralized and distributed grid control strategies and adheres to the VDE-AR-N 4105 and EN50160 regulatory standards for providing ancillary services, such as reactive power control. 
+The provided Python-based framework, **PIDE**, implements active voltage control for low-voltage (LV) electrical distribution grids using inverter-based control of distributed energy resources (DERs). The framework supports both decentralized and distributed grid control strategies and adheres to the VDE-AR-N 4105 and EN50160 regulatory standards for providing ancillary services, such as reactive power control.
 
 This repository is designed to the following:
 
@@ -63,15 +63,15 @@ This repository is structured in a few key folders:
 
 </details>
 
-### 2. BACKGROUND 
+### 2. BACKGROUND
 
 <details>
   <summary>Click to expand/collapse</summary>
 
-European power system hierarchy includes four primary levels: extra high voltage (220–400 kV), high voltage (**HV**, 60–220 kV), medium voltage (**MV**, 6–20 kV), and low voltage (**LV**, 230–400 V) grids, interconnected via transformers. 
-The power generated from traditional large power plants and offshore wind farms feeds into the extra high and high voltage grids. 
-Larger photovoltaic plants generally link to the medium voltage grid. 
-Major industrial consumers directly connect to the high-voltage grid, while smaller industries connect to either the medium or low-voltage grid, depending on their specific power requirements. 
+European power system hierarchy includes four primary levels: extra high voltage (220–400 kV), high voltage (**HV**, 60–220 kV), medium voltage (**MV**, 6–20 kV), and low voltage (**LV**, 230–400 V) grids, interconnected via transformers.
+The power generated from traditional large power plants and offshore wind farms feeds into the extra high and high voltage grids.
+Larger photovoltaic plants generally link to the medium voltage grid.
+Major industrial consumers directly connect to the high-voltage grid, while smaller industries connect to either the medium or low-voltage grid, depending on their specific power requirements.
 
 <img src="helper/img/00_european_power_system.png" alt="European Power System" style="width:30%; display: block; margin-bottom: 10px;">
 
@@ -104,7 +104,6 @@ where $V_{i}$ is the parent busbar's voltage, which serves as a reference value.
 
 <img src="helper/img/01_q_control.png" alt="Reactive Power Control" style="width:30%; display: block; margin-bottom: 10px;">
 
-
 **Fig. 3: Reactive power control for DERs, schematic representation of the methods based on the actual value (AV) for active power and the PCC voltage measurement, based on VDE-AR-N 4105 Grid Code.**
 
 </details>
@@ -114,7 +113,7 @@ where $V_{i}$ is the parent busbar's voltage, which serves as a reference value.
 <details>
   <summary>Click to expand/collapse</summary>
 
-Execute PIDE framework by using the **[__main__.py](__main__.py)** script as shown below. 
+Execute PIDE framework by using the **[**main**.py](__main__.py)** script as shown below.
 
 1. **Command Line**
 
@@ -125,42 +124,45 @@ python __main__.py --pv_ctrl voltage_reactive_power_ctrl --storage_p_ctrl rbc_pv
 ```bash
 python PIDE --pv_ctrl voltage_reactive_power_ctrl --storage_p_ctrl rbc_pvbes_distributed_sc_ctrl
 ```
-2. **Run main file only**: **[__main__.py](__main__.py)**
+
+2. **Run main file only**: **[**main**.py](__main__.py)**
 
 Arguments:
-| Argument                | Type    | Default Value                       | Choices                         | Help        |
+| Argument | Type | Default Value | Choices | Help |
 |-------------------------|---------|-------------------------------------|---------------------------------|-------------|
-| `--benchmark`           | str     | `simbench`                          | `simbench`, `customised`                    | Benchmark dataset: 'simbench', 'customised'.|
-| `--sb_code`             | str     | `1-LV-rural1--0-sw`                 |                                             | Simbench code for the benchmark dataset.|
-| `--scenario`            | str     | `2-future`                          | `0-today`, `1-near future`, `2-future`      | Scenario options: '0-today', '1-near future', '2-future'.|
-| `--standard`            | str     | `vde`                               | `vde`, `customised`                         | Standards: 'vde' (VDE-AR-N 4105) or 'customised' (e.g., IEEE Std 1547-2018).|
-| `--standard_mode`       | str     | `base`                              | `base`, `deadband`, `customised`            | Mode options: 'base', 'deadband', or 'customised'.|
-| `--timeseries_ctrl`     | str     | `control_module`                    | `control_module`, `test_mode`, `manual`     | Timeseries control mode.|
-| `--pv_ctrl`             | str     | `voltage_reactive_power_ctrl`       |`datasource`,`voltage_reactive_power_ctrl`,`power_factor_active_power_ctrl`,`constant_power_factor_active_power_ctrl` | Control mode for PV systems.|
-| `--storage_p_ctrl`      | str     | `rbc_pvbes_distributed_sc_ctrl`     |`datasource`,`rbc_pvbes_decentralized_sc_ctrl`,`rbc_pvbes_distributed_sc_ctrl`,`rbc_pvbes_distributed_sc_dnc_ctrl`,`rbc_bes_dnc_ctrl` | P-Control mode for storage systems.|
-| `--storage_q_ctrl`      | str     | `"voltage_reactive_power_ctrl"`     |`datasource`,`voltage_reactive_power_ctrl`,`constant_power_factor_active_power_ctrl`| Q-Control mode for storage systems.|
-| `--soc_initial`         | float   | `5.0`                               | `0.00-100.00`                               | Initial state of charge (SoC) for storage systems.|
-| `--scaling_pv`          | float   | `1.0`                               | `0.-10.0`                                   | Scaling factor for PV capacity (0.0-10.0).|
-| `--scaling_load`        | float   | `1.0`                               | `0.-10.0`                                   | Scaling factor for load capacity (0.0-10.0).|
-| `--scaling_storage`     | float   | `1.0`                               | `0.-10.0`                                   | caling factor for storage capacity (0.0-10.0).|
-| `--time_mode`           | str     | `"selected"`                        | `selected`, `random`, `default`             | Time mode: 'selected', 'random', or 'default'.|
-| `--episode_start_hour`  | int     | `0`                                 | `0-24`                                      | Start hour (0-24).|
-| `--episode_start_day`   | int     | `179`                               | `0-354`                                     | Start day (0-354).|
-| `--episode_start_min_interval`| int | `0`                               | `0-3`                                       | Starting interval (0-3).|
-| `--episode_limit`       | int     | `96`                                | `0-35136`                                   | Maximum number of time steps in an episode.|
-| `--max_iterations`      | int     | `35135`                             | `0-35136`                                   | Maximum number of iterations for the simulation.|
-| `--flag_monte_carlo`    | lambda  | `"false"`                           | `bool`                                      | Enable or disable Monte Carlo simulation mode.|
-| `--num_monte_carlo_runs`| int     | `100`                               |                                             | Number of Monte Carlo simulation runs.|
-| `--seed_value`          | int     | `42`                                | `0-100`                                     | Initial seed value for Monte Carlo simulations (range 0-100)..|
-| `--mpv_flag`            | lambda  | `"true"`                            | `bool`                                      | Enable or disable MPV analysis. `false` or `true`|
-| `--mpv_benchmark`       | str     | `"mpvbench"`                        | `simbench`, `mpvbench`, `customised`        | MPV benchmarking source: 'simbench', 'mpvbench', or 'customised'..|
-| `--mpv_scaling`                     | float            | `0.60`         | `0.-10.0`              | Scaling factor for MPV capacity (0.0-10.0).|
-| `--mpv_concentration_rate_percent`  | float            | `100.00`       | `0.00-100.00`          | MPV concentration rate as a percentage (0.0-100.0).|
-| `--mpv_inverter_apparent_power_watt`| int              | `800`          | `600-1000`             | Maximum apparent power for MPV inverters (600-1000 W).|
-| `--mpv_solar_cell_capacity_watt`    | int              | `2000`         | `800-2000`             | Maximum power for MPV solar cells (800-2000 W).|
+| `--benchmark` | str | `simbench` | `simbench`, `customised` | Benchmark dataset: 'simbench', 'customised'.|
+| `--sb_code` | str | `1-LV-rural1--0-sw` | | Simbench code for the benchmark dataset.|
+| `--scenario` | str | `2-future` | `0-today`, `1-near future`, `2-future` | Scenario options: '0-today', '1-near future', '2-future'.|
+| `--standard` | str | `vde` | `vde`, `customised` | Standards: 'vde' (VDE-AR-N 4105) or 'customised' (e.g., IEEE Std 1547-2018).|
+| `--standard_mode` | str | `base` | `base`, `deadband`, `customised` | Mode options: 'base', 'deadband', or 'customised'.|
+| `--timeseries_ctrl` | str | `control_module` | `control_module`, `test_mode`, `manual` | Timeseries control mode.|
+| `--pv_ctrl` | str | `voltage_reactive_power_ctrl` |`datasource`,`voltage_reactive_power_ctrl`,`power_factor_active_power_ctrl`,`constant_power_factor_active_power_ctrl` | Control mode for PV systems.|
+| `--storage_p_ctrl` | str | `rbc_pvbes_distributed_sc_ctrl` |`datasource`,`rbc_pvbes_decentralized_sc_ctrl`,`rbc_pvbes_distributed_sc_ctrl`,`rbc_pvbes_distributed_sc_dnc_ctrl`,`rbc_bes_dnc_ctrl` | P-Control mode for storage systems.|
+| `--storage_q_ctrl` | str | `"voltage_reactive_power_ctrl"` |`datasource`,`voltage_reactive_power_ctrl`,`constant_power_factor_active_power_ctrl`| Q-Control mode for storage systems.|
+| `--soc_initial` | float | `5.0` | `0.00-100.00` | Initial state of charge (SoC) for storage systems.|
+| `--scaling_pv` | float | `1.0` | `0.-10.0` | Scaling factor for PV capacity (0.0-10.0).|
+| `--scaling_load` | float | `1.0` | `0.-10.0` | Scaling factor for load capacity (0.0-10.0).|
+| `--scaling_storage` | float | `1.0` | `0.-10.0` | caling factor for storage capacity (0.0-10.0).|
+| `--time_mode` | str | `"selected"` | `selected`, `random`, `default` | Time mode: 'selected', 'random', or 'default'.|
+| `--episode_start_hour` | int | `0` | `0-24` | Start hour (0-24).|
+| `--episode_start_day` | int | `179` | `0-354` | Start day (0-354).|
+| `--episode_start_min_interval`| int | `0` | `0-3` | Starting interval (0-3).|
+| `--episode_limit` | int | `96` | `0-35136` | Maximum number of time steps in an episode.|
+| `--max_iterations` | int | `35135` | `0-35136` | Maximum number of iterations for the simulation.|
+| `--flag_monte_carlo` | lambda | `"false"` | `bool` | Enable or disable Monte Carlo simulation mode.|
+| `--num_monte_carlo_runs`| int | `100` | | Number of Monte Carlo simulation runs.|
+| `--seed_value` | int | `42` | `0-100` | Initial seed value for Monte Carlo simulations (range 0-100)..|
+| `--mpv_flag` | lambda | `"true"` | `bool` | Enable or disable MPV analysis. `false` or `true`|
+| `--mpv_benchmark` | str | `"mpvbench"` | `simbench`, `mpvbench`, `customised` | MPV benchmarking source: 'simbench', 'mpvbench', or 'customised'..|
+| `--mpv_scaling` | float | `0.60` | `0.-10.0` | Scaling factor for MPV capacity (0.0-10.0).|
+| `--mpv_concentration_rate_percent` | float | `100.00` | `0.00-100.00` | MPV concentration rate as a percentage (0.0-100.0).|
+| `--mpv_inverter_apparent_power_watt`| int | `800` | `600-1000` | Maximum apparent power for MPV inverters (600-1000 W).|
+| `--mpv_solar_cell_capacity_watt` | int | `2000` | `800-2000` | Maximum power for MPV solar cells (800-2000 W).|
 
-2. Alternatively, you can modify the arguments in the **[__main__.py](__main__.py)** file to change the default value parameters.
+2. Alternatively, you can modify the arguments in the **[**main**.py](__main__.py)** file to change the default value parameters.
+
 ---
+
 #### Configuration Files:
 
 Additional configuration settings are available in the `yaml` directory:
@@ -175,16 +177,16 @@ Additional configuration settings are available in the `yaml` directory:
 
 - **1. Open Configuration Files**: Locate the configuration files under the `local` and `hpc` directories.
 - **2. Edit Paths**: Search for the path settings in each file and update them as follows:
+  - **`local` (on Windows)**: These settings are used on a local Windows machine.
 
-  - **`local` (on Windows)**: These settings are used on a local Windows machine. 
     ```yaml
-    helper_path: C:\\Users\\<username>\\PIDE\\helper 
+    helper_path: C:\\Users\\<username>\\PIDE\\helper
     input_data_path: C:\\Users\\<username>\\PIDE\\input\\data
     output_data_path: C:\\Users\\<username>\\PIDE\\output\\data
     output_test_path: C:\\Users\\<username>\\PIDE\\test
     ```
 
-  - **`hpc` (on Linux-based)**: These settings are intended for an HPC environment running on Linux. 
+  - **`hpc` (on Linux-based)**: These settings are intended for an HPC environment running on Linux.
     ```yaml
     helper_path: /hkfs/home/haicore/iai/<username>/PIDE/helper
     input_data_path: /hkfs/home/haicore/iai/<username>/PIDE/input/data
@@ -203,49 +205,57 @@ To replicate the results from the paper, follow these steps:
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/KIT-IAI/PIDE.git
-    ```
+   ```bash
+   git clone https://github.com/KIT-IAI/PIDE.git
+   ```
+
 2. Create a virtual environment :
 
-    ```bash
-    python3.9 -m venv pide_env
-    source pide_env/bin/activate
-    pip install --upgrade pip
-    ```
+   ```bash
+   python3.9 -m venv pide_env
+   source pide_env/bin/activate
+   pip install --upgrade pip
+   ```
+
 3. Run the following command to install the packages:
 
-    ```bash
-    cd PIDE
-    pip install -r requirements.txt
-    ```
-4. Run the provided bash scripts for each case study:
-    - **For *Case Study 1***: 
-        ```bash
-        chmod +x ./exe_server_helper_cs1_job.sh
-        chmod +x ./exe_server_master_cs1_job.sh
-        sbatch ./exe_server_master_cs1_job.sh
-        ```
-      - Calls `exe_server_helper_cs1_job.sh` to create SLURM jobs for sensitivity analysis. 
-      - Calls `execution_script_cs1.ipynb` to execute script for Case Study 1 on SLURM.  
-      - Open and execute the notebook `monte_carlo_cs1.ipynb`.
+   ```bash
+   cd PIDE
+   pip install -r requirements.txt
+   ```
 
-    - **For *Case Study 2***: 
-        ```bash
-        chmod +x ./exe_server_master_cs2_job.sh 
-        sbatch ./exe_server_master_cs2_job.sh
-        ```
-      - Open and execute the notebook `monte_carlo_cs2.ipynb`.
-    - **For *Case Study 3***: 
-        ```bash
-        chmod +x ./exe_server_master_cs3_job.sh
-        sbatch ./exe_server_master_cs3_job.sh
-        ``` 
-      - Open and execute the notebook `monte_carlo_cs3.ipynb`.
+4. Run the provided bash scripts for each case study:
+   - **For _Case Study 1_**:
+
+     ```bash
+     chmod +x ./exe_server_helper_cs1_job.sh
+     chmod +x ./exe_server_master_cs1_job.sh
+     sbatch ./exe_server_master_cs1_job.sh
+     ```
+
+     - Calls `exe_server_helper_cs1_job.sh` to create SLURM jobs for sensitivity analysis.
+     - Calls `execution_script_cs1.ipynb` to execute script for Case Study 1 on SLURM.
+     - Open and execute the notebook `monte_carlo_cs1.ipynb`.
+
+   - **For _Case Study 2_**:
+     ```bash
+     chmod +x ./exe_server_master_cs2_job.sh
+     sbatch ./exe_server_master_cs2_job.sh
+     ```
+
+     - Open and execute the notebook `monte_carlo_cs2.ipynb`.
+   - **For _Case Study 3_**:
+     ```bash
+     chmod +x ./exe_server_master_cs3_job.sh
+     sbatch ./exe_server_master_cs3_job.sh
+     ```
+
+     - Open and execute the notebook `monte_carlo_cs3.ipynb`.
 
 </details>
 
 ## License
+
 This code is licensed under the [MIT License](LICENSE).
 
 <h2>Citation &#128221;</h2>
@@ -254,6 +264,7 @@ If you use this framework in your research, please consider citing our paper &#1
 </p>
 
 - BibTeX format:
+
 ```bibtex
 @article{Demirel2025,
   title     = {PIDE: Photovoltaic integration dynamics and efficiency for autonomous control on power distribution grids},
@@ -269,7 +280,9 @@ If you use this framework in your research, please consider citing our paper &#1
 ```
 
 #### Acknowledgment
+
 This work was supported in part by:
+
 - The Energy System Design (ESD) Project (Structure 37.12.02).
 - The Helmholtz Association (HGF) Initiative and Networking Fund through Helmholtz AI.
 - The HAICORE@KIT partition.
